@@ -1,7 +1,34 @@
-import { Box, Container, Flex, Grid, GridItem, IconButton, Image, Link, Text, VStack } from "@chakra-ui/react";
+import { useState } from "react";
+import { Box, Container, Flex, Grid, GridItem, IconButton, Image, Link, Text, VStack, Input, Button, FormControl, FormLabel, Textarea } from "@chakra-ui/react";
 import { FaHome, FaUser, FaUpload } from "react-icons/fa";
 
 const Index = () => {
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [caption, setCaption] = useState("");
+  const [photos, setPhotos] = useState([
+    { src: "https://via.placeholder.com/200", caption: "Photo 1" },
+    { src: "https://via.placeholder.com/200", caption: "Photo 2" },
+    { src: "https://via.placeholder.com/200", caption: "Photo 3" },
+    { src: "https://via.placeholder.com/200", caption: "Photo 4" },
+  ]);
+
+  const handlePhotoChange = (event) => {
+    setSelectedPhoto(URL.createObjectURL(event.target.files[0]));
+  };
+
+  const handleCaptionChange = (event) => {
+    setCaption(event.target.value);
+  };
+
+  const handleUpload = () => {
+    if (selectedPhoto && caption) {
+      const newPhoto = { src: selectedPhoto, caption };
+      setPhotos([newPhoto, ...photos]);
+      setSelectedPhoto(null);
+      setCaption("");
+    }
+  };
+
   return (
     <Container maxW="container.xl" p={0}>
       {/* Navigation Bar */}
@@ -26,19 +53,12 @@ const Index = () => {
         <Box id="home" mb={8}>
           <Text fontSize="3xl" mb={4}>Feed</Text>
           <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
-            {/* Example Photos */}
-            <GridItem>
-              <Image src="https://via.placeholder.com/200" alt="Photo 1" borderRadius="md" />
-            </GridItem>
-            <GridItem>
-              <Image src="https://via.placeholder.com/200" alt="Photo 2" borderRadius="md" />
-            </GridItem>
-            <GridItem>
-              <Image src="https://via.placeholder.com/200" alt="Photo 3" borderRadius="md" />
-            </GridItem>
-            <GridItem>
-              <Image src="https://via.placeholder.com/200" alt="Photo 4" borderRadius="md" />
-            </GridItem>
+            {photos.map((photo, index) => (
+              <GridItem key={index}>
+                <Image src={photo.src} alt={`Photo ${index + 1}`} borderRadius="md" />
+                <Text mt={2}>{photo.caption}</Text>
+              </GridItem>
+            ))}
           </Grid>
         </Box>
 
@@ -50,13 +70,12 @@ const Index = () => {
             <Text fontSize="lg">Bio: This is a short bio about the user.</Text>
             <Text fontSize="xl" mt={4}>Photos</Text>
             <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={6}>
-              {/* Example User Photos */}
-              <GridItem>
-                <Image src="https://via.placeholder.com/200" alt="User Photo 1" borderRadius="md" />
-              </GridItem>
-              <GridItem>
-                <Image src="https://via.placeholder.com/200" alt="User Photo 2" borderRadius="md" />
-              </GridItem>
+              {photos.map((photo, index) => (
+                <GridItem key={index}>
+                  <Image src={photo.src} alt={`User Photo ${index + 1}`} borderRadius="md" />
+                  <Text mt={2}>{photo.caption}</Text>
+                </GridItem>
+              ))}
             </Grid>
           </VStack>
         </Box>
@@ -65,8 +84,15 @@ const Index = () => {
         <Box id="upload">
           <Text fontSize="3xl" mb={4}>Upload</Text>
           <Box borderWidth="1px" borderRadius="lg" p={4}>
-            <Text mb={2}>Upload your photo:</Text>
-            <input type="file" accept="image/*" />
+            <FormControl>
+              <FormLabel>Upload your photo:</FormLabel>
+              <Input type="file" accept="image/*" onChange={handlePhotoChange} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Caption:</FormLabel>
+              <Textarea value={caption} onChange={handleCaptionChange} placeholder="Add a caption for your photo" />
+            </FormControl>
+            <Button mt={4} colorScheme="blue" onClick={handleUpload}>Upload</Button>
           </Box>
         </Box>
       </Box>
