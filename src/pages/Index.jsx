@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Box, Container, Flex, Grid, GridItem, IconButton, Image, Link, Text, VStack, Input, Button, FormControl, FormLabel, Textarea } from "@chakra-ui/react";
-import { FaHome, FaUser, FaUpload } from "react-icons/fa";
+import { FaHome, FaUser, FaUpload, FaHeart } from "react-icons/fa";
 
 const Index = () => {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [caption, setCaption] = useState("");
   const [photos, setPhotos] = useState([
-    { src: "https://via.placeholder.com/200", caption: "Photo 1" },
-    { src: "https://via.placeholder.com/200", caption: "Photo 2" },
-    { src: "https://via.placeholder.com/200", caption: "Photo 3" },
-    { src: "https://via.placeholder.com/200", caption: "Photo 4" },
+    { src: "https://via.placeholder.com/200", caption: "Photo 1", likes: 0 },
+    { src: "https://via.placeholder.com/200", caption: "Photo 2", likes: 0 },
+    { src: "https://via.placeholder.com/200", caption: "Photo 3", likes: 0 },
+    { src: "https://via.placeholder.com/200", caption: "Photo 4", likes: 0 },
   ]);
 
   const handlePhotoChange = (event) => {
@@ -22,11 +22,17 @@ const Index = () => {
 
   const handleUpload = () => {
     if (selectedPhoto && caption) {
-      const newPhoto = { src: selectedPhoto, caption };
+      const newPhoto = { src: selectedPhoto, caption, likes: 0 };
       setPhotos([newPhoto, ...photos]);
       setSelectedPhoto(null);
       setCaption("");
     }
+  };
+
+  const handleLike = (index) => {
+    const newPhotos = [...photos];
+    newPhotos[index].likes += 1;
+    setPhotos(newPhotos);
   };
 
   return (
@@ -57,6 +63,17 @@ const Index = () => {
               <GridItem key={index}>
                 <Image src={photo.src} alt={`Photo ${index + 1}`} borderRadius="md" />
                 <Text mt={2}>{photo.caption}</Text>
+                <Flex align="center" mt={2}>
+                  <IconButton
+                    aria-label="Like"
+                    icon={<FaHeart />}
+                    size="sm"
+                    variant="ghost"
+                    colorScheme="red"
+                    onClick={() => handleLike(index)}
+                  />
+                  <Text ml={2}>{photo.likes}</Text>
+                </Flex>
               </GridItem>
             ))}
           </Grid>
@@ -74,6 +91,17 @@ const Index = () => {
                 <GridItem key={index}>
                   <Image src={photo.src} alt={`User Photo ${index + 1}`} borderRadius="md" />
                   <Text mt={2}>{photo.caption}</Text>
+                  <Flex align="center" mt={2}>
+                    <IconButton
+                      aria-label="Like"
+                      icon={<FaHeart />}
+                      size="sm"
+                      variant="ghost"
+                      colorScheme="red"
+                      onClick={() => handleLike(index)}
+                    />
+                    <Text ml={2}>{photo.likes}</Text>
+                  </Flex>
                 </GridItem>
               ))}
             </Grid>
